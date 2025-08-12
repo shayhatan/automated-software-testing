@@ -6,7 +6,8 @@ class Blog:
         self.posts = []
 
     def __repr__(self):
-        pass
+        return '{} by {} ({} post{})'.format(self.title, self.author, len(self.posts),
+                                              's' if len(self.posts) != 1 else '')
 
     def create_post(self, title, content):
         pass
