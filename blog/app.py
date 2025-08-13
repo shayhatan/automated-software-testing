@@ -54,3 +54,5 @@ def ask_create_post():
     content = input('Enter your post content: ')
 
     blogs[blog_name].create_post(title, content)
+
+
