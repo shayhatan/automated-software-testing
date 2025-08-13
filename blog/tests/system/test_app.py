@@ -6,17 +6,49 @@ from blog.post import Post
 
 
 class TestApp(TestCase):
-    def test_menu_prints_prompt(self):
+    def test_menu_calls_create_blog(self):
         with patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = ('c', 'Test Create Blog', 'Test Author', 'q')
+
+            blog.app.menu()
+
+            self.assertIsNotNone(blog.app.blogs['Test Create Blog'])
+
+    def test_menu_calls_print_blogs(self):
+        with patch('builtins.input') as mocked_input:
+            with patch('blog.app.print_blogs') as mocked_print_blogs:
+                mocked_input.side_effect = ('l', 'q')
+                blog.app.menu()
+
+                mocked_print_blogs.assert_called()
+
+    def test_menu_calls_ask_read_blog(self):
+        with patch('builtins.input') as mocked_input:
+            with patch('blog.app.ask_read_blog') as mocked_read_blogs:
+                mocked_input.side_effect = ('r', 'Test', 'q')
+                blog.app.menu()
+
+                mocked_read_blogs.assert_called()
+
+    def test_menu_prints_prompt(self):
+        with patch('builtins.input', return_value = 'q.') as mocked_input:
             blog.app.menu()
             mocked_input.assert_called_with(blog.app.MENU_PROMPT)
 
-    def test_menu_calls_print_blogs(self):
+    def test_menu_print_blogs(self):
         with patch('blog.app.print_blogs') as mocked_print_blogs:
             # to pass prog for waiting input
             with patch('builtins.input', return_value='q'):
                 blog.app.menu()
                 mocked_print_blogs.assert_called()
+
+    def test_menu_calls_ask_create_post(self):
+        with patch('builtins.input') as mocked_input:
+            with patch('blog.app.ask_create_post') as mocked_ask_create_post:
+                mocked_input.side_effect = ('p', 'Test', 'New Post', 'New Content', 'q')
+                blog.app.menu()
+
+                mocked_ask_create_post.assert_called()
 
     def test_print_blogs(self):
         b = Blog('Test', 'Test Author')
@@ -29,7 +61,7 @@ class TestApp(TestCase):
     def test_ask_create_blog(self):
         with patch('builtins.input') as mocked_input:
             # passing value by order to the input
-            mocked_input.side_effect = ('Test', 'Test Author')
+            mocked_input.side_effect = ('Test', 'Test Author', 'q')
             blog.app.ask_create_blog()
             self.assertIsNotNone(blog.app.blogs.get('Test'))
 
