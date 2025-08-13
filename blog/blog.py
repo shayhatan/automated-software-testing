@@ -20,3 +20,4 @@ class Blog:
             'author': self.author,
             'posts': [post.json() for post in self.posts]
         }
+
